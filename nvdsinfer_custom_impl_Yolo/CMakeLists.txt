@@ -85,7 +85,7 @@ set_target_properties(nvdsinfer_custom_impl_Yolo PROPERTIES
 
 # Install target
 install(TARGETS nvdsinfer_custom_impl_Yolo
-    LIBRARY DESTINATION include
+    LIBRARY DESTINATION lib
 )
 
 # Include headers in the package
