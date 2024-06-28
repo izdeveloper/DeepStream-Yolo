@@ -28,12 +28,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -shared -fPIC -Wno-error=deprecate
 # Include directories
 include_directories(
     /opt/nvidia/deepstream/deepstream/sources/includes
-    /usr/local/cuda-${CUDA_VER}/include
+    /usr/local/cuda/include
     
 )
 
 link_directories(
-    /usr/local/cuda-${CUDA_VER}/lib64
+    /usr/local/cuda/lib64
 )
 
 if(OPENCV)
@@ -85,7 +85,7 @@ set_target_properties(nvdsinfer_custom_impl_Yolo PROPERTIES
 
 # Install target
 install(TARGETS nvdsinfer_custom_impl_Yolo
-    LIBRARY DESTINATION lib
+    LIBRARY DESTINATION include
 )
 
 # Include headers in the package
