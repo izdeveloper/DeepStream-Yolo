@@ -1,6 +1,6 @@
 # Minimum required version of CMake
 cmake_minimum_required(VERSION 3.10)
-set(CMAKE_CUDA_COMPILER /usr/local/cuda-11.4/bin/nvcc)
+set(CMAKE_CUDA_COMPILER /usr/local/cuda/bin/nvcc)
 # Project name and version
 project(nvdsinfer_custom_impl_Yolo VERSION 1.0 LANGUAGES CXX CUDA)
 
@@ -28,11 +28,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -shared -fPIC -Wno-error=deprecate
 # Include directories
 include_directories(
     /opt/nvidia/deepstream/deepstream/sources/includes
-    /usr/local/cuda-11.4/include
+    /usr/local/cuda/include
 )
 
 link_directories(
-    /usr/local/cuda-11.4/lib64
+    /usr/local/cuda/lib64
 )
 
 if(OPENCV)
