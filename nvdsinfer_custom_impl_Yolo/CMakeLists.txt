@@ -1,8 +1,11 @@
 # Minimum required version of CMake
 cmake_minimum_required(VERSION 3.10)
-
+set(CMAKE_CUDA_COMPILER /usr/local/cuda-11.4/bin/nvcc)
 # Project name and version
-project(nvdsinfer_custom_impl_Yolo VERSION 1.0)
+project(nvdsinfer_custom_impl_Yolo VERSION 1.0 LANGUAGES CXX CUDA)
+
+# Установка пути к компилятору CUDA
+
 
 # CPack settings for DEB package
 set(CPACK_PACKAGE_NAME "nvdsinfer_custom_impl_Yolo")
@@ -13,9 +16,6 @@ set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/postinst;${C
 
 # Include CPack module
 include(CPack)
-
-# Set CUDA version variable
-set(CUDA_VER "10.2")
 
 # Options for OpenCV and Graph support
 option(OPENCV "Enable OpenCV support" OFF)
@@ -28,12 +28,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -shared -fPIC -Wno-error=deprecate
 # Include directories
 include_directories(
     /opt/nvidia/deepstream/deepstream/sources/includes
-    /usr/local/cuda/include
-    
+    /usr/local/cuda-11.4/include
 )
 
 link_directories(
-    /usr/local/cuda/lib64
+    /usr/local/cuda-11.4/lib64
 )
 
 if(OPENCV)
@@ -47,19 +46,25 @@ if(GRAPH)
 endif()
 
 # Source files
-file(GLOB_RECURSE SRCFILES *.cpp *.cu)
+file(GLOB_RECURSE SRCFILES
+    # ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/nvdsinfer_yolo_engine.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/nvdsinitinputlayers_Yolo.cpp  
+    ${CMAKE_CURRENT_SOURCE_DIR}/nvdsparsebbox_Yolo.cpp  
+    ${CMAKE_CURRENT_SOURCE_DIR}/utils.cpp  
+    ${CMAKE_CURRENT_SOURCE_DIR}/yolo.cpp  
+    ${CMAKE_CURRENT_SOURCE_DIR}/yoloPlugins.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/layers/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.cu
+)
 list(REMOVE_ITEM SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/calibrator.cpp)
 
 if(OPENCV)
     list(APPEND SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/calibrator.cpp)
 endif()
 
-# Remove .cu files from SRCFILES and set CUFILES
-file(GLOB CUFILES *.cu)
-list(REMOVE_ITEM SRCFILES ${CUFILES})
-
 # Add library
-add_library(nvdsinfer_custom_impl_Yolo SHARED ${SRCFILES} ${CUFILES})
+add_library(nvdsinfer_custom_impl_Yolo SHARED ${SRCFILES})
 
 # Link libraries
 target_link_libraries(nvdsinfer_custom_impl_Yolo
@@ -67,7 +72,6 @@ target_link_libraries(nvdsinfer_custom_impl_Yolo
     nvinfer
     nvparsers
     nvonnxparser
-    ${CMAKE_CUDA_IMPLICIT_LINK_DIRECTORIES}
     cudart
     cublas
     stdc++fs
@@ -81,6 +85,7 @@ endif()
 set_target_properties(nvdsinfer_custom_impl_Yolo PROPERTIES
     CUDA_SEPARABLE_COMPILATION ON
     POSITION_INDEPENDENT_CODE ON
+    CUDA_ARCHITECTURES 52
 )
 
 # Install target
