@@ -8,8 +8,9 @@ project(nvdsinfer_custom_impl_Yolo VERSION 1.0 LANGUAGES CXX CUDA)
 
 
 # CPack settings for DEB package
-set(CPACK_PACKAGE_NAME "nvdsinfer_custom_impl_Yolo")
+set(CPACK_PACKAGE_NAME "nvdsinfer-custom-impl-Yolo")
 set(CPACK_PACKAGE_VERSION "1.0")
+set(CPACK_DEBIAN_FILE_NAME "DEB-DEFAULT")
 set(CPACK_PACKAGE_CONTACT "Your Name <your.email@example.com>")
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 set(CPACK_DEBIAN_PACKAGE_CONTROL_EXTRA "${CMAKE_CURRENT_SOURCE_DIR}/postinst;${CMAKE_CURRENT_SOURCE_DIR}/prerm")
