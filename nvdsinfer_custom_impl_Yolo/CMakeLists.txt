@@ -67,16 +67,33 @@ endif()
 # Add library
 add_library(nvdsinfer_custom_impl_Yolo SHARED ${SRCFILES})
 
+# Check if nvparsers is available (deprecated in newer TensorRT versions)
+find_library(NVPARSERS_LIB nvparsers
+    PATHS
+        /usr/lib/aarch64-linux-gnu
+        /usr/lib/x86_64-linux-gnu
+        /usr/local/lib
+        ${CMAKE_SYSROOT}/usr/lib
+    NO_DEFAULT_PATH
+)
+
 # Link libraries
 target_link_libraries(nvdsinfer_custom_impl_Yolo
     nvinfer_plugin
     nvinfer
-    nvparsers
     nvonnxparser
     cudart
     cublas
     stdc++fs
 )
+
+# Link nvparsers only if available (for backward compatibility with older TensorRT versions)
+if(NVPARSERS_LIB)
+    target_link_libraries(nvdsinfer_custom_impl_Yolo ${NVPARSERS_LIB})
+    message(STATUS "Found nvparsers: ${NVPARSERS_LIB}")
+else()
+    message(STATUS "nvparsers not found (deprecated/removed in newer TensorRT versions) - skipping")
+endif()
 
 if(OPENCV)
     target_link_libraries(nvdsinfer_custom_impl_Yolo ${OpenCV_LIBS})
